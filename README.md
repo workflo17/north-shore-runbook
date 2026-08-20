@@ -18,6 +18,17 @@ is what Vercel serves.
 node build.mjs   # after any edit to src/runbook.html
 ```
 
-The deployment carries `noindex` three ways: the meta tag, `robots.txt`, and an
-`X-Robots-Tag` header. The URL is unlisted rather than private, so treat it as
-shareable with anyone you would show the document to, and no one else.
+Live at <https://north-shore-runbook.vercel.app>, deploying on every push.
+
+**This repository is public, and that is not a slip.** Vercel blocks deployments from
+private repositories on this plan: the same push that succeeds here was refused
+twenty-five times while the repo was private. The trade is acceptable because the
+identical text is already public in
+[north-shore-site/DEPLOY.md](https://github.com/workflo17/north-shore-site/blob/master/DEPLOY.md).
+If that ever stops being true, this has to move to a paid plan or a file-based deploy
+rather than quietly going private again, which would just break the deploy.
+
+The page itself carries `noindex` three ways: the meta tag, `robots.txt`, and an
+`X-Robots-Tag` header. So it will not turn up in search, but the URL is unlisted
+rather than secret. Share it with anyone you would show the document to, and no one
+else.
