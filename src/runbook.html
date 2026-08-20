@@ -317,6 +317,12 @@
     padding: 24px 28px 26px;
     margin: 18px 0 26px;
   }
+  .oneline {
+    font-family: var(--display); font-weight: 600; font-size: 20px;
+    line-height: 1.35; letter-spacing: -.01em; color: var(--ink);
+    margin: 0 0 4px; max-width: 30ch;
+    font-variation-settings: "SOFT" 20, "WONK" 1;
+  }
   .brief-tag {
     font-size: 10px; letter-spacing: .17em; text-transform: uppercase;
     color: var(--verdigris-ink); font-weight: 600; margin: 0 0 18px;
@@ -690,94 +696,65 @@ git push</pre><button type="button">copy</button></div>
     </div>
     <p class="phase-note">This is the part that most agent websites skip, and it is the part that turns a form into commission. Build it before the form starts firing, not after.</p>
 
-        <div class="step" data-step="13">
+            <div class="step" data-step="13">
       <div class="step-n">13</div>
       <div class="step-body">
         <h3><label><input type="checkbox"><span>Understand what the CRM is actually for</span></label></h3>
-        <p>No clicking in this step. It is the argument for the whole phase, and it is written to be read aloud or turned around on a laptop, because the person who has to believe it is Margie.</p>
+        <p>No clicking here. This is what you say to Margie, and it is short on purpose.</p>
 
         <div class="brief">
-          <p class="brief-tag">Written for the conversation with Margie</p>
+          <p class="brief-tag">Read this to her</p>
 
-          <h4 class="sub">The leak</h4>
-          <p>Every agent has a version of the same one. Somebody calls in March asking what their house is worth. Margie talks to them, sends comps, they say they are thinking about spring next year. In September they list with somebody else.</p>
-          <p>Not because that agent was better. Because that agent called in July.</p>
-          <p>Nothing about that story is a lead-generation problem. The lead was already hers. It was a memory problem, and it is the single most expensive one in the business, because the deal was closer to signed than any cold call will ever be.</p>
+          <p class="oneline">It is a to-do list that remembers which seller to call, and when.</p>
 
-          <h4 class="sub">The question worth asking her, rather than a statistic</h4>
-          <p><b>"How many people asked you what their house was worth last year and then never listed with anyone at all?"</b></p>
-          <p>She will have a number. It is usually larger than the person saying it expects, and it is a better argument than anything an industry report can supply, because it is hers. Some of those people genuinely changed their minds. Some of them went quiet because nobody stayed in front of them.</p>
-          <p>Then the arithmetic, which only has to be run once. The Nassau median single-family price was $875,000 in June 2026. At a negotiated rate around two and a half per cent, the listing side of a median sale is roughly $22,000 before the brokerage split. Commission rates are negotiable and that figure is illustrative, but the shape of it holds: <b>recovering one deal a year that would otherwise have drifted is worth more than every other item on this runbook combined.</b> The tool costs nothing, so there is no break-even to reach.</p>
+          <h4 class="sub">Why she needs one</h4>
+          <p>Somebody calls in March asking what their house is worth. She talks to them, sends comps, they say maybe spring. In September they list with someone else.</p>
+          <p>That agent was not better. That agent called in July.</p>
+          <p>Then ask her one question and let her answer it: <b>"How many people asked you what their house was worth last year and never listed with anyone?"</b> Her number is the size of the problem. A Nassau median sale is worth around $22,000 to the listing side before her split, so getting one of those back a year covers everything on this page many times over.</p>
 
-          <h4 class="sub">What the thing actually is</h4>
-          <p>Three jobs, and they are not equally important. The first two are the ones people think of, and they are the ones a notebook already half-solves.</p>
+          <h4 class="sub">What it does</h4>
           <div class="tablewrap">
             <table>
-              <thead><tr><th>Job</th><th>In practice</th><th>Her phone and a notebook</th></tr></thead>
+              <thead><tr><th>When</th><th>What happens</th><th>Who</th></tr></thead>
               <tbody>
-                <tr><td class="nowrap">A list of everyone</td><td>Every person who ever asked, with the address and how to reach them</td><td>Fine</td></tr>
-                <tr><td class="nowrap">A record of what was said</td><td>Calls, emails and notes on one timeline, so month four does not start from nothing</td><td>Badly, and only if she wrote it down</td></tr>
-                <tr><td class="nowrap"><b>A reminder of what is next</b></td><td>"Call the Cedar Lane seller on the 14th" appearing on the 14th, without anyone remembering to look</td><td><b>Not at all</b></td></tr>
+                <tr><td class="nowrap tnum">Tue 9:14</td><td>Someone fills in the form. Her phone buzzes. They show up in the CRM.</td><td class="who-auto">automatic</td></tr>
+                <tr><td class="nowrap tnum">Tue 9:22</td><td>She calls. Books a walkthrough for Thursday.</td><td>Margie</td></tr>
+                <tr><td class="nowrap tnum">Tue 9:29</td><td>Two taps: log the call, set the next task for Thursday.</td><td>Margie</td></tr>
+                <tr><td class="nowrap tnum">Thu 8:00</td><td>"Split Rock walkthrough" is at the top of her list.</td><td class="who-auto">automatic</td></tr>
+                <tr><td class="nowrap tnum">Thu</td><td>She sends the numbers. They say maybe spring. She sets a task for 1 February.</td><td>Margie</td></tr>
+                <tr><td class="nowrap tnum">1 Feb</td><td>The name comes back on its own. She calls. They are ready.</td><td class="who-auto">automatic</td></tr>
               </tbody>
             </table>
           </div>
-          <p>The third one is the entire reason to do this. A CRM is not a database of people. She already has that, and after nineteen years she has it in better shape than any software will. What she does not have is a system that surfaces the right name on the right morning without her thinking about it. That is what she is being handed.</p>
+          <p>Two calls and thirty seconds of tapping are hers. The rest happens whether she remembers or not.</p>
 
-          <h4 class="sub">One lead, all the way through</h4>
-          <p>This is the part to walk through slowly. It is the whole product in eight rows.</p>
+          <h4 class="sub">What it costs her</h4>
+          <p>Nothing to run. About twenty minutes a morning, making calls she was making anyway. She opens one screen, it shows the two or three names due today, she calls them and sets the next date. No data entry and nothing to maintain.</p>
+          <p>It will not call anyone for her. It replaces her memory of dates, not her memory of people.</p>
+
+          <h4 class="sub">If she pushes back</h4>
           <div class="tablewrap">
             <table>
-              <thead><tr><th>When</th><th>What happens</th><th>Who does it</th></tr></thead>
+              <thead><tr><th>She says</th><th>You say</th></tr></thead>
               <tbody>
-                <tr><td class="nowrap tnum">Tue 9:14</td><td>A homeowner on Split Rock Road fills in the valuation form</td><td class="who-auto">the website</td></tr>
-                <tr><td class="nowrap tnum">Tue 9:14</td><td>Her phone buzzes with the name, the address and what they said</td><td class="who-auto">automatic</td></tr>
-                <tr><td class="nowrap tnum">Tue 9:14</td><td>The same person appears in the CRM, marked New</td><td class="who-auto">automatic</td></tr>
-                <tr><td class="nowrap tnum">Tue 9:22</td><td>She calls while they are still on the website. Six minutes. Books a walkthrough for Thursday.</td><td>Margie</td></tr>
-                <tr><td class="nowrap tnum">Tue 9:29</td><td>Two taps: log the call, set the next task for Thursday</td><td>Margie</td></tr>
-                <tr><td class="nowrap tnum">Thu 8:00</td><td>"Split Rock walkthrough" is sitting at the top of her task list</td><td class="who-auto">automatic</td></tr>
-                <tr><td class="nowrap tnum">Thu</td><td>Walkthrough, CMA and net sheet sent. They say spring, maybe. She sets a task for 1 February.</td><td>Margie</td></tr>
-                <tr><td class="nowrap tnum">1 Feb</td><td>The name comes back up on its own. She calls. They are ready.</td><td class="who-auto">automatic</td></tr>
-              </tbody>
-            </table>
-          </div>
-          <p>The competing agent who spoke to them that same week never called back in February. That is the only difference between the two of them, and it is worth the whole commission.</p>
-          <p>Note what is in the "Margie" column: two calls and about thirty seconds of tapping. Everything else happens whether she remembers it or not. That ratio is the pitch.</p>
-
-          <h4 class="sub">What her mornings look like</h4>
-          <p>She opens one screen. It shows the tasks due today, which on a normal week is two or three names. She makes those calls, which she was going to make anyway, and sets the next date before closing each one. Twenty minutes.</p>
-          <p>There is no data entry, no weekly review, and nothing to maintain. If it ever feels like more than that, it has been set up wrong, and step 15 is where that gets fixed.</p>
-
-          <h4 class="sub">What it will not do, said plainly</h4>
-          <ul>
-            <li>It will not call anyone for her, or write anything for her.</li>
-            <li>It will not tell her anything about a person that she does not put in.</li>
-            <li>It does not replace her memory of people. It replaces her memory of dates, which is the part that fails.</li>
-            <li>The free tier has no marketing automation and no mass email, which is deliberate. Sellers on the North Shore do not want a drip campaign from their neighbour's agent.</li>
-          </ul>
-
-          <h4 class="sub">The objections she will actually raise</h4>
-          <div class="tablewrap">
-            <table>
-              <thead><tr><th>She says</th><th>The honest answer</th></tr></thead>
-              <tbody>
-                <tr><td class="nowrap">"I keep it all in my head."</td><td>She keeps the <em>people</em> in her head, and she is better at that than any software. Nobody keeps forty follow-up dates in their head. This is a calendar for the ones that are not appointments yet.</td></tr>
-                <tr><td class="nowrap">"I tried one and stopped."</td><td>Almost everyone does, and usually because they were handed thirty fields to fill in per contact. This one is eight stages and a date. If it ever takes more than ten seconds a lead, it is set up wrong.</td></tr>
-                <tr><td class="nowrap">"I don't have time to learn software."</td><td>Fifteen minutes once, to see the screen. After that it is the twenty minutes of calls she was making anyway.</td></tr>
-                <tr><td class="nowrap">"What does it cost?"</td><td>Nothing. No time limit, no card, no trial that expires. The paid tiers are marketing automation she does not need at this volume.</td></tr>
-                <tr><td class="nowrap">"Whose is it?"</td><td>Hers. The account is in her name and her email. Add yourself as a user so you can set it up, and she can remove you in one click.</td></tr>
-                <tr><td class="nowrap">"What if I want out?"</td><td>Contacts export to a spreadsheet in two clicks and there is no contract. Worth saying out loud, because an agent should never be handed a system her marketing guy controls.</td></tr>
-                <tr><td class="nowrap">"My brokerage has one."</td><td>Then use theirs, and the website can point at it instead. Worth checking before step 14, because a brokerage CRM she already logs into beats a better one she does not. Ask what happens to those contacts if she ever changes brokerage; that answer often decides it.</td></tr>
+                <tr><td class="nowrap">"I keep it in my head."</td><td>The people, yes. Not forty follow-up dates.</td></tr>
+                <tr><td class="nowrap">"I tried one and quit."</td><td>Most people do, because they got thirty fields per contact. This is eight stages and a date.</td></tr>
+                <tr><td class="nowrap">"What does it cost?"</td><td>Nothing. No card, no trial that runs out.</td></tr>
+                <tr><td class="nowrap">"Whose is it?"</td><td>Hers. Her name, her email, and she can remove you in one click.</td></tr>
+                <tr><td class="nowrap">"What if I stop?"</td><td>Export to a spreadsheet and walk away. No contract.</td></tr>
               </tbody>
             </table>
           </div>
 
-          <h4 class="sub">The one habit that makes or breaks it</h4>
-          <p><b>Never close a record without setting the next date.</b> That is the whole discipline. Do that and the system works on its own. Skip it and the pipeline quietly turns back into a list, and a list has never reminded anyone of anything.</p>
+          <h4 class="sub">The one rule</h4>
+          <p><b>Never close a record without setting the next date.</b> Do that and it works by itself. Skip it and it is just a list.</p>
         </div>
 
-        <h4 class="sub">Two things for you, not for her</h4>
-        <p><b>Why HubSpot rather than a real estate CRM.</b> Follow Up Boss, kvCORE and Sierra are built for this industry and cost between $69 and $500 a month. What they add over HubSpot is IDX search, drip campaigns and lead-source routing, none of which matter until she has more leads than she can personally call. HubSpot's free tier has no time limit, no card, a million contacts, tasks with reminders, a deal pipeline, email logging, and an API the website can write to. Move to the industry tools when the volume justifies the bill.</p>
-        <p><b>Contact against deal,</b> because the vocabulary trips people up and you will need it in step 15. A <b>contact</b> is a person. A <b>deal</b> is one potential transaction. The same contact can carry several deals over the years: the house she sells in 2027 and the condo she buys in 2030. The form creates contacts. You create the deal when the lead turns into a real conversation.</p>
+        <h4 class="sub">Two notes for you, not for her</h4>
+        <ul>
+          <li><b>HubSpot, not Follow Up Boss or kvCORE.</b> Those run $69 to $500 a month for drip campaigns and IDX she does not need yet. HubSpot's free tier has no time limit, no card, and an API the website can write to.</li>
+          <li><b>Contact against deal.</b> A contact is a person, a deal is one transaction, and one person can have several over the years. The form makes contacts. You make the deal when it turns into a real conversation.</li>
+        </ul>
       </div>
     </div>
 
