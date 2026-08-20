@@ -1,0 +1,1319 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<meta name="theme-color" content="#0D2231">
+<meta name="description" content="Internal launch runbook for the North Shore seller site.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2212%22%20fill%3D%22%230D2231%22%2F%3E%3Cpath%20d%3D%22M14%2046V18h5.6l12.4%2018%2012.4-18H50v28h-5.4V27.4L32.6%2044h-1.2L19.4%2027.4V46z%22%20fill%3D%22%23F3F0E7%22%2F%3E%3Crect%20x%3D%2214%22%20y%3D%2250%22%20width%3D%2236%22%20height%3D%223%22%20rx%3D%221.5%22%20fill%3D%22%232F7A69%22%2F%3E%3C%2Fsvg%3E">
+<style>
+  /* The artifact host supplies a reset. Standalone has to bring its own. */
+  *, *::before, *::after { box-sizing: border-box; }
+  body { margin: 0; }
+  img, svg { max-width: 100%; }
+</style>
+</head>
+<body>
+<title>North Shore Launch Runbook</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+
+<style>
+  /* Palette carried over from the site itself: Long Island Sound navy, warm
+     ivory paper, and the verdigris that Gold Coast copper roofs go. The doc and
+     the thing it deploys should not look like strangers. */
+  :root {
+    --paper:      #F3F0E7;
+    --surface:    #FBFAF6;
+    --surface-2:  #E9E4D6;
+    --harbor:     #0D2231;
+    --ink:        #14232C;
+    --ink-2:      #465A63;
+    --ink-3:      #75868E;
+    --verdigris:  #2F7A69;
+    --verdigris-ink: #23604F;
+    --verd-wash:  #E2EDE8;
+    --brass:      #8A5D12;
+    --brass-wash: #F4EBD8;
+    --line:       #D9D3C1;
+    --line-soft:  #E6E1D2;
+    --code-bg:    #10293A;
+    --code-ink:   #DCE7EC;
+    --code-key:   #6FC3AA;
+
+    --display: "Fraunces", "Iowan Old Style", Palatino, Georgia, serif;
+    --body: "Archivo", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+    --rail: 250px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:      #0B1A24;
+      --surface:    #0F2331;
+      --surface-2:  #16303F;
+      --harbor:     #071219;
+      --ink:        #E7E3D8;
+      --ink-2:      #A9BCC6;
+      --ink-3:      #7B939F;
+      --verdigris:  #4FB097;
+      --verdigris-ink: #7FCDB6;
+      --verd-wash:  #14332F;
+      --brass:      #D3A257;
+      --brass-wash: #2C2415;
+      --line:       #22475D;
+      --line-soft:  #1A3648;
+      --code-bg:    #061019;
+      --code-ink:   #D7E3E9;
+      --code-key:   #6FC3AA;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --paper:      #0B1A24;
+    --surface:    #0F2331;
+    --surface-2:  #16303F;
+    --harbor:     #071219;
+    --ink:        #E7E3D8;
+    --ink-2:      #A9BCC6;
+    --ink-3:      #7B939F;
+    --verdigris:  #4FB097;
+    --verdigris-ink: #7FCDB6;
+    --verd-wash:  #14332F;
+    --brass:      #D3A257;
+    --brass-wash: #2C2415;
+    --line:       #22475D;
+    --line-soft:  #1A3648;
+    --code-bg:    #061019;
+    --code-ink:   #D7E3E9;
+    --code-key:   #6FC3AA;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16.5px;
+    line-height: 1.62;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--verdigris-ink); text-underline-offset: 2px; }
+  a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 2px solid var(--verdigris);
+    outline-offset: 2px;
+  }
+
+  .wrap { max-width: 1140px; margin: 0 auto; padding: 0 26px; }
+
+  /* ---------------- masthead ---------------- */
+
+  .mast {
+    background: var(--harbor);
+    color: #EFEBE0;
+    padding: 46px 0 40px;
+    border-bottom: 3px solid var(--verdigris);
+  }
+  .mast .eyebrow {
+    font-size: 11px; letter-spacing: .2em; text-transform: uppercase;
+    color: #56A992; font-weight: 600; margin: 0 0 16px;
+  }
+  .mast h1 {
+    font-family: var(--display);
+    font-weight: 600;
+    font-size: clamp(30px, 5.2vw, 48px);
+    line-height: 1.08;
+    letter-spacing: -.018em;
+    margin: 0 0 16px;
+    max-width: 20ch;
+    text-wrap: balance;
+    font-variation-settings: "SOFT" 30, "WONK" 1;
+  }
+  .mast p.lede {
+    margin: 0 0 30px;
+    max-width: 62ch;
+    color: #AEC1CB;
+    font-size: 17px;
+  }
+  .facts { display: flex; flex-wrap: wrap; gap: 10px; }
+  .fact {
+    display: inline-flex; align-items: baseline; gap: 9px;
+    border: 1px solid #24475D; border-radius: 2px;
+    padding: 7px 13px; font-size: 13px; color: #AEC1CB;
+  }
+  .fact b {
+    font-family: var(--mono); font-size: 12.5px; font-weight: 500;
+    color: #EFEBE0; letter-spacing: -.01em;
+  }
+  .fact.on b { color: #6FC3AA; }
+
+  /* ---------------- layout ---------------- */
+
+  .cols {
+    display: grid;
+    grid-template-columns: var(--rail) minmax(0, 1fr);
+    gap: 56px;
+    align-items: start;
+    padding: 44px 0 90px;
+  }
+
+  .rail { position: sticky; top: 26px; }
+  .rail h2 {
+    font-size: 10.5px; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600; margin: 0 0 16px;
+  }
+  .rail ol { list-style: none; margin: 0 0 26px; padding: 0; display: grid; gap: 3px; }
+  .rail a {
+    display: grid; grid-template-columns: 22px 1fr; gap: 10px;
+    padding: 7px 9px; border-radius: 2px;
+    color: var(--ink-2); text-decoration: none; font-size: 14px;
+    border-left: 2px solid transparent;
+  }
+  .rail a:hover { background: var(--surface); color: var(--ink); }
+  .rail a.here { border-left-color: var(--verdigris); background: var(--surface); color: var(--ink); font-weight: 500; }
+  .rail a span:first-child { font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+  .rail .done { font-family: var(--mono); font-size: 12px; color: var(--ink-3); }
+
+  .prog { border-top: 1px solid var(--line-soft); padding-top: 16px; }
+  .prog-bar { height: 4px; background: var(--surface-2); border-radius: 2px; overflow: hidden; margin-bottom: 9px; }
+  .prog-fill { height: 100%; width: 0; background: var(--verdigris); transition: width .32s ease; }
+  .prog-txt { font-size: 12.5px; color: var(--ink-3); }
+  .prog button {
+    margin-top: 12px; background: none; border: 1px solid var(--line);
+    color: var(--ink-3); font: inherit; font-size: 12px; padding: 5px 10px;
+    border-radius: 2px; cursor: pointer;
+  }
+  .prog button:hover { border-color: var(--ink-3); color: var(--ink-2); }
+
+  /* ---------------- prelude ---------------- */
+
+  .prelude {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-radius: 3px;
+    padding: 26px 30px;
+    margin-bottom: 52px;
+  }
+  .prelude h2 {
+    font-family: var(--display); font-weight: 600; font-size: 21px;
+    margin: 0 0 6px; letter-spacing: -.01em;
+  }
+  .prelude > p { margin: 0 0 20px; color: var(--ink-2); max-width: 66ch; }
+  .need { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 34px; }
+  @media (max-width: 560px) { .need { grid-template-columns: minmax(0, 1fr); } }
+  .need h3 {
+    font-size: 10.5px; letter-spacing: .16em; text-transform: uppercase;
+    color: var(--verdigris-ink); font-weight: 600; margin: 0 0 7px;
+  }
+  .need p { margin: 0; font-size: 14.5px; color: var(--ink-2); line-height: 1.55; }
+
+  /* ---------------- phases ---------------- */
+
+  .phase { margin-bottom: 62px; scroll-margin-top: 20px; }
+  .phase-head {
+    display: flex; flex-wrap: wrap; align-items: baseline; gap: 14px;
+    border-bottom: 1px solid var(--line); padding-bottom: 13px; margin-bottom: 30px;
+  }
+  .phase-num {
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    color: var(--verdigris-ink); letter-spacing: .06em;
+  }
+  .phase-head h2 {
+    font-family: var(--display); font-weight: 600;
+    font-size: clamp(22px, 3vw, 29px); letter-spacing: -.015em;
+    margin: 0; flex: 1 1 auto; text-wrap: balance;
+    font-variation-settings: "SOFT" 20, "WONK" 1;
+  }
+  .clock { font-family: var(--mono); font-size: 12px; color: var(--ink-3); white-space: nowrap; }
+  .phase-note {
+    margin: -14px 0 30px; color: var(--ink-2); max-width: 68ch; font-size: 15.5px;
+  }
+
+  .phase.blocked .phase-num { color: var(--brass); }
+  .phase.blocked .phase-head { border-bottom-color: var(--brass); }
+
+  /* ---------------- steps ---------------- */
+
+  .step {
+    display: grid; grid-template-columns: 52px minmax(0, 1fr);
+    gap: 20px; margin-bottom: 34px;
+  }
+  .step-n {
+    font-family: var(--display); font-weight: 600; font-size: 27px;
+    color: var(--ink-3); line-height: 1.15; text-align: right;
+    font-variant-numeric: tabular-nums; padding-top: 1px;
+  }
+  .step.is-done .step-n { color: var(--verdigris); }
+  .step-body > h3 {
+    font-size: 18px; font-weight: 600; margin: 0 0 4px;
+    letter-spacing: -.005em; line-height: 1.3;
+  }
+  .step-body > h3 label { cursor: pointer; display: inline-flex; align-items: baseline; gap: 10px; }
+  .step-body input[type="checkbox"] {
+    appearance: none; width: 15px; height: 15px; flex: none;
+    border: 1.5px solid var(--line); border-radius: 2px;
+    background: var(--surface); cursor: pointer; transform: translateY(1px);
+  }
+  .step-body input[type="checkbox"]:checked {
+    background: var(--verdigris); border-color: var(--verdigris);
+  }
+  .step-body input[type="checkbox"]:checked::after {
+    content: ""; display: block; width: 4px; height: 8px;
+    border: solid var(--paper); border-width: 0 2px 2px 0;
+    transform: rotate(43deg) translate(3px, 0px);
+  }
+  .step.is-done .step-body > h3 label { color: var(--ink-3); }
+  .step-body p { margin: 0 0 12px; max-width: 68ch; }
+  .step-body ol, .step-body ul { margin: 0 0 14px; padding-left: 20px; max-width: 68ch; }
+  .step-body li { margin-bottom: 7px; }
+  .step-body li::marker { color: var(--ink-3); }
+
+  kbd {
+    font-family: var(--body); font-weight: 600; font-size: .92em;
+    background: var(--surface-2); color: var(--ink);
+    padding: 1px 6px; border-radius: 2px; white-space: nowrap;
+  }
+  code {
+    font-family: var(--mono); font-size: .88em;
+    background: var(--surface-2); color: var(--ink);
+    padding: 1.5px 5px; border-radius: 2px;
+  }
+
+  /* ---------------- code blocks ---------------- */
+
+  .cmd { position: relative; margin: 0 0 16px; }
+  .cmd pre {
+    margin: 0; background: var(--code-bg); color: var(--code-ink);
+    font-family: var(--mono); font-size: 13.5px; line-height: 1.72;
+    padding: 15px 60px 15px 17px; border-radius: 3px;
+    overflow-x: auto;
+  }
+  .cmd pre b { color: var(--code-key); font-weight: 500; }
+  .cmd pre i { color: #7E9AA8; font-style: normal; }
+  .cmd button {
+    position: absolute; top: 9px; right: 9px;
+    background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.16);
+    color: #B7C8D1; font: inherit; font-size: 11px; font-family: var(--mono);
+    padding: 3px 8px; border-radius: 2px; cursor: pointer;
+  }
+  .cmd button:hover { background: rgba(255,255,255,.14); color: #EFEBE0; }
+  .cmd button.ok { color: var(--code-key); border-color: var(--code-key); }
+
+  /* ---------------- callouts ---------------- */
+
+  .verify, .warn {
+    border-left: 3px solid; padding: 13px 17px; margin: 0 0 16px;
+    font-size: 14.5px; line-height: 1.58; max-width: 68ch;
+  }
+  .verify { border-color: var(--verdigris); background: var(--verd-wash); }
+  .warn { border-color: var(--brass); background: var(--brass-wash); }
+  .verify h4, .warn h4 {
+    font-size: 10px; letter-spacing: .17em; text-transform: uppercase;
+    margin: 0 0 6px; font-weight: 600;
+  }
+  .verify h4 { color: var(--verdigris-ink); }
+  .warn h4 { color: var(--brass); }
+  .verify p, .warn p { margin: 0 0 8px; max-width: none; }
+  .verify p:last-child, .warn p:last-child { margin-bottom: 0; }
+  .verify code, .warn code { background: rgba(125,125,125,.16); }
+
+  /* ---------------- the client-facing brief ----------------
+     Step 13 gets read to Margie rather than executed, so it is set apart:
+     inset on a warmer ground, with its own rule down the left. */
+  .brief {
+    background: var(--surface);
+    border: 1px solid var(--line-soft);
+    border-left: 3px solid var(--verdigris);
+    border-radius: 3px;
+    padding: 24px 28px 26px;
+    margin: 18px 0 26px;
+  }
+  .brief-tag {
+    font-size: 10px; letter-spacing: .17em; text-transform: uppercase;
+    color: var(--verdigris-ink); font-weight: 600; margin: 0 0 18px;
+  }
+  .brief p, .brief ul { max-width: 64ch; }
+  .brief > p:last-child { margin-bottom: 0; }
+  h4.sub {
+    font-family: var(--display); font-weight: 600; font-size: 17.5px;
+    letter-spacing: -.008em; margin: 26px 0 9px; color: var(--ink);
+    font-variation-settings: "SOFT" 20, "WONK" 1;
+  }
+  .brief > h4.sub:first-of-type { margin-top: 0; }
+  .tnum { font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; }
+  td.who-auto { color: var(--verdigris-ink); font-style: italic; }
+
+  /* ---------------- tables ---------------- */
+
+  .tablewrap { overflow-x: auto; margin: 0 0 18px; border: 1px solid var(--line-soft); border-radius: 3px; }
+  table { border-collapse: collapse; width: 100%; font-size: 14px; }
+  th, td { text-align: left; padding: 10px 15px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+  thead th {
+    font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--ink-3); font-weight: 600; background: var(--surface);
+    white-space: nowrap;
+  }
+  tbody tr:last-child td { border-bottom: 0; }
+  td code { font-size: 12.5px; }
+  .nowrap { white-space: nowrap; }
+
+  /* ---------------- appendix ---------------- */
+
+  .appendix { border-top: 2px solid var(--line); padding-top: 40px; margin-top: 20px; }
+  .appendix h2 {
+    font-family: var(--display); font-weight: 600; font-size: 25px;
+    margin: 0 0 30px; letter-spacing: -.015em;
+  }
+  .app-item { margin-bottom: 40px; scroll-margin-top: 20px; }
+  .app-item h3 {
+    font-size: 17px; font-weight: 600; margin: 0 0 5px;
+    display: flex; align-items: baseline; gap: 11px;
+  }
+  .app-item h3 span {
+    font-family: var(--mono); font-size: 11.5px; color: var(--verdigris-ink);
+    font-weight: 500; letter-spacing: .05em;
+  }
+  .app-item > p { margin: 0 0 14px; max-width: 68ch; color: var(--ink-2); }
+
+  footer.end {
+    border-top: 1px solid var(--line-soft); margin-top: 46px; padding: 24px 0 8px;
+    font-size: 13px; color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 8px 24px;
+  }
+
+  @media (max-width: 900px) {
+    .cols { grid-template-columns: minmax(0, 1fr); gap: 0; padding-top: 30px; }
+    .rail { position: static; margin-bottom: 40px; }
+    .rail ol { grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); display: grid; }
+  }
+  @media (max-width: 620px) {
+    .wrap { padding: 0 18px; }
+    .step { grid-template-columns: 34px minmax(0, 1fr); gap: 13px; }
+    .step-n { font-size: 21px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; scroll-behavior: auto !important; }
+  }
+</style>
+
+<div class="mast">
+  <div class="wrap">
+    <p class="eyebrow">Margie Horowitz &middot; North Shore Long Island</p>
+    <h1>Everything between here and a practice that brings in sellers.</h1>
+    <p class="lede">Thirty-two steps in the order they have to happen: the profiles people actually search first, then the website, then somewhere to keep the people who get in touch, then the wiring that carries a lead from the form to her phone. The slow steps are at the front on purpose, so they run in the background while you build the rest.</p>
+    <div class="facts">
+      <span class="fact">Repository <b>workflo17/north-shore-site</b></span>
+      <span class="fact on">Deployed <b>north-shore-site-workflo17.vercel.app</b></span>
+      <span class="fact">Indexing <b>closed until step 27</b></span>
+      <span class="fact">Cost to run <b>$0 plus the domain</b></span>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+<div class="cols">
+
+  <nav class="rail" aria-label="Phases">
+    <h2>Phases</h2>
+    <ol>
+      <li><a href="#p1" class="here"><span>1</span><span>The profiles</span></a></li>
+      <li><a href="#p2"><span>2</span><span>The website</span></a></li>
+      <li><a href="#p3"><span>3</span><span>The CRM</span></a></li>
+      <li><a href="#p4"><span>4</span><span>Leads arriving</span></a></li>
+      <li><a href="#p5"><span>5</span><span>Margie's answers</span></a></li>
+      <li><a href="#p6"><span>6</span><span>Search, then upkeep</span></a></li>
+      <li><a href="#appendix"><span>&plus;</span><span>Appendices</span></a></li>
+    </ol>
+    <div class="prog">
+      <div class="prog-bar"><div class="prog-fill" id="pfill"></div></div>
+      <p class="prog-txt" id="ptxt">0 of 32 steps done</p>
+      <button type="button" id="preset">Clear progress</button>
+    </div>
+  </nav>
+
+  <main>
+
+  <div class="prelude">
+    <h2>Why this order</h2>
+    <p>The two slowest steps in the whole project are not technical. A Google Business Profile takes days to verify, and Margie has to answer four questions before anything can be published. Both are at the front, so the waiting happens while you build instead of after.</p>
+    <div class="need">
+      <div>
+        <h3>Accounts you will create</h3>
+        <p>Google Business Profile, a Facebook Page, Vercel, HubSpot and Resend. Every one of them is free at this scale. The domain is the only thing you pay for.</p>
+      </div>
+      <div>
+        <h3>Two are hers, not yours</h3>
+        <p>The Google and Facebook profiles represent a licensed agent, so Margie creates them and adds you as a manager. Doing it under your own name is both against their rules and a licensing problem.</p>
+      </div>
+      <div>
+        <h3>The one blocker</h3>
+        <p>Two brokerages are on file for her and one is wrong. Nothing can be published to the public until she says which. Step 1 asks her.</p>
+      </div>
+      <div>
+        <h3>Where the work is</h3>
+        <p>Local repo at <code>~/north-shore-site</code>, already pushed. Every command below runs from that folder.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ PHASE 1 ============ -->
+  <section class="phase" id="p1">
+    <div class="phase-head">
+      <span class="phase-num">PHASE 1</span>
+      <h2>The profiles people actually search</h2>
+      <span class="clock">~45 min, then days of waiting</span>
+    </div>
+    <p class="phase-note">Nobody types a domain to find an agent. They search her name, or they search "realtor near me" and look at the map. These two profiles answer both, they outrank a new website for months, and one of them takes days to approve. That is why they come first.</p>
+
+    <div class="step" data-step="1">
+      <div class="step-n">01</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Have the one conversation with Margie</span></label></h3>
+        <p>Everything that blocks this project blocks it because only she can answer. Ask for all of it in one message rather than discovering each gap at the step it stops.</p>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Ask for</th><th>Because</th></tr></thead>
+            <tbody>
+              <tr><td class="nowrap"><b>Which brokerage</b></td><td>Berkshire Hathaway HomeServices Laffey lists her in Williston Park. The public record and her Bayville listing say Americana Realty Group in Syosset. New York requires the broker's name and office address on advertising, so nothing publishes until this is settled.</td></tr>
+              <tr><td class="nowrap"><b>Her direct phone and email</b></td><td>The number on the page came off the public record, not from her. It is about to go on a Google listing, so it has to be right.</td></tr>
+              <tr><td class="nowrap"><b>Manager access</b></td><td>She creates the Google and Facebook profiles from her own accounts, then adds you as a manager. That is the only way to run them for her without breaking their rules.</td></tr>
+              <tr><td class="nowrap"><b>A portrait</b></td><td>The slot on the site is deliberately empty rather than filled with a generated headshot. Google and Facebook both want one too.</td></tr>
+              <tr><td class="nowrap"><b>Three testimonials</b></td><td>No public reviews of her exist anywhere. First name, last initial, town, and her permission to use them.</td></tr>
+              <tr><td class="nowrap"><b>Two photo sets</b></td><td>22 Lincoln Ave and 44 Tyrconnell Ave are not indexed on Zillow or Redfin, so they cannot be recovered any other way. They are her own listings.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="warn">
+          <h4>Watch out</h4>
+          <p>Do not create either profile under your own name to save time. Google requires the business owner to verify, Facebook Pages belong to a personal account, and a listing that misrepresents who holds the licence is a problem for her, not for you. The manager route takes her about two minutes.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="2">
+      <div class="step-n">02</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Start the Google Business Profile, because it is the long pole</span></label></h3>
+        <p>For a local agent this outranks the website itself. It is what puts her in the map panel for "real estate agent Syosset", and verification can take several days, so start it before anything else.</p>
+        <ol>
+          <li>Margie goes to <a href="https://business.google.com">business.google.com</a> and clicks <kbd>Manage now</kbd>. If a listing for her already exists, she claims it rather than making a second one.</li>
+          <li>Business name: <b>her own name</b>, for example <i>Margie Horowitz, Real Estate Salesperson</i>. Not the brokerage's name. The brokerage has its own listing and a duplicate gets both suppressed.</li>
+          <li>Category: <b>Real Estate Agent</b>. Add <b>Real Estate Consultant</b> as a secondary.</li>
+          <li>Choose <b>service area</b> rather than a storefront unless clients actually visit an office she staffs. Add Syosset, Glen Cove, Glen Head, Jericho and Woodbury.</li>
+          <li>Phone: the number she confirmed in step 1. Website: leave it for now, step 12 comes back and fills it.</li>
+          <li>Verification: postcard, phone, or video. Video is normally fastest for agents. Expect a few days either way.</li>
+          <li>Once it is approved, she adds you under <b>Business Profile settings</b>, <b>People and access</b>, as a <b>Manager</b>.</li>
+        </ol>
+        <div class="verify">
+          <h4>Check it worked</h4>
+          <p>Search her name plus "Syosset" in an incognito window. The profile shows on the right of the results, with no "Claim this business" prompt on it.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="3">
+      <div class="step-n">03</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Create the Facebook Page</span></label></h3>
+        <p>Long Island sellers over fifty are on Facebook, and local buy-and-sell and town groups are where a recommendation actually spreads. The Page also gives her somewhere to post a listing that is not the brokerage's feed.</p>
+        <ol>
+          <li>From <b>her</b> personal Facebook account: <a href="https://www.facebook.com/pages/create">facebook.com/pages/create</a>.</li>
+          <li>Page name: the same string as the Google profile, character for character. Category: <b>Real Estate Agent</b>.</li>
+          <li>Fill in the bio, the phone, and the service area. Leave the website field for step 12.</li>
+          <li>Profile picture: her portrait. Cover photo: use <code>img/hero.jpg</code> from the repo, or one of her own listing photos.</li>
+          <li>She adds you at <b>Settings</b>, <b>Page access</b>, <b>Add New</b>, with full control.</li>
+          <li>Set the page button to <b>Book now</b> or <b>Learn more</b>, pointing at the site once step 12 is done.</li>
+        </ol>
+        <div class="warn">
+          <h4>Watch out</h4>
+          <p>Most brokerages require agent pages to carry the broker's name and to follow their branding rules. Ask her compliance contact before the page goes public, for the same reason step 23 exists.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="4">
+      <div class="step-n">04</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Connect an Instagram account to the Page</span></label></h3>
+        <p>Optional, and worth about twenty minutes. Listing photography is the one thing a real estate practice generates constantly, and Instagram is where it costs nothing to publish.</p>
+        <ol>
+          <li>Create the account, or convert her existing one to a <b>Business</b> account in <b>Settings</b>, <b>Account type</b>.</li>
+          <li>Link it to the Facebook Page through <a href="https://business.facebook.com">Meta Business Suite</a>, so one post reaches both.</li>
+          <li>Put the website in the bio link once step 12 is done.</li>
+        </ol>
+        <p>If she will not post regularly, skip it. An account with four posts from last spring reads worse than no account.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 2 ============ -->
+  <section class="phase" id="p2">
+    <div class="phase-head">
+      <span class="phase-num">PHASE 2</span>
+      <h2>The website</h2>
+      <span class="clock">~35 min, plus DNS</span>
+    </div>
+    <p class="phase-note">The repository is already pushed and already carries a <code>vercel.json</code>, so this is mostly clicking. The site stays closed to search engines throughout, which is deliberate and gets undone in phase 6.</p>
+
+    <div class="step" data-step="5">
+      <div class="step-n">05</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Create the Vercel account</span></label></h3>
+        <p>Go to <a href="https://vercel.com/signup">vercel.com/signup</a> and choose <b>Continue with GitHub</b>. Authorise it against the <code>workflo17</code> account. When it asks what kind of account, pick <b>Hobby</b>: it is free, and it covers a site at this scale with a wide margin.</p>
+        <div class="verify">
+          <h4>Check it worked</h4>
+          <p>You land on a dashboard at <code>vercel.com/&lt;your-username&gt;</code> with an empty project list.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="6">
+      <div class="step-n">06</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Import the repository</span></label></h3>
+        <ol>
+          <li>Top right of the dashboard, click <kbd>Add New…</kbd> then <kbd>Project</kbd>.</li>
+          <li>Under <b>Import Git Repository</b>, find <code>north-shore-site</code>.</li>
+          <li>If it is not in the list, click <b>Adjust GitHub App Permissions</b>, grant access to that one repository, and come back.</li>
+          <li>Click <kbd>Import</kbd> next to it.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step" data-step="7">
+      <div class="step-n">07</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Set the project up as a static site with functions</span></label></h3>
+        <p>This is the one screen where a wrong default costs you a failed deploy. There is no build step in this project, so anything Vercel guesses about compiling it will be wrong.</p>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Field</th><th>What to set</th></tr></thead>
+            <tbody>
+              <tr><td class="nowrap">Project Name</td><td><code>north-shore-site</code>, which becomes <code>north-shore-site-workflo17.vercel.app</code></td></tr>
+              <tr><td class="nowrap">Framework Preset</td><td><b>Other</b>. Not Next.js, not Vite.</td></tr>
+              <tr><td class="nowrap">Root Directory</td><td><code>./</code>, leave it alone</td></tr>
+              <tr><td class="nowrap">Build Command</td><td>Leave empty and switch the override off if it is on</td></tr>
+              <tr><td class="nowrap">Output Directory</td><td>Leave empty</td></tr>
+              <tr><td class="nowrap">Install Command</td><td>Leave empty</td></tr>
+              <tr><td class="nowrap">Environment Variables</td><td>Skip. Phase 4 handles these.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="warn">
+          <h4>Watch out</h4>
+          <p><code>project.vercel.app</code> is claimed globally, first come first served, and
+          <code>north-shore-site.vercel.app</code> already belongs to an unrelated consulting firm.
+          When the short name is taken, Vercel silently gives the project a longer alias instead,
+          in the shape <code>project-scope.vercel.app</code>. <b>Read the real URL off the
+          deployment rather than assuming it</b>, and use that one in step 11, or the canonical tag
+          ends up pointing at a stranger's website.</p>
+        </div>
+        <p>Click <kbd>Deploy</kbd>.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="8">
+      <div class="step-n">08</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Confirm the deploy, including the function</span></label></h3>
+        <p>It takes thirty to sixty seconds. When the confetti clears, click the screenshot to open the live site. Then check three URLs by hand, substituting your own project name.</p>
+        <div class="cmd"><pre><b>https://north-shore-site-workflo17.vercel.app/</b>              <i># the page, with the concept bar on top</i>
+<b>https://north-shore-site-workflo17.vercel.app/robots.txt</b>    <i># must say Disallow: /</i>
+<b>https://north-shore-site-workflo17.vercel.app/api/lead</b>      <i># must answer, not 404</i></pre><button type="button">copy</button></div>
+        <div class="verify">
+          <h4>Check it worked</h4>
+          <p>Opening <code>/api/lead</code> in a browser sends a GET, and the function answers <code>{"ok":false,"error":"Use POST."}</code>. That refusal is the proof it is alive. A <b>404 instead means the function did not deploy</b>: open the deployment, click the <b>Functions</b> tab, and confirm <code>api/lead.js</code> is listed.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="9">
+      <div class="step-n">09</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Buy the domain</span></label></h3>
+        <p>Her name is the strongest choice, because the people most likely to search are ones who already got her name from a neighbour: <code>margiehorowitz.com</code>. A keyword domain like <code>northshorehomevalue.com</code> reads like an ad and ages badly.</p>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Where</th><th>Roughly</th><th>Trade-off</th></tr></thead>
+            <tbody>
+              <tr><td class="nowrap">Vercel Domains</td><td>$20/yr</td><td>DNS configures itself, one less account, costs a few dollars more</td></tr>
+              <tr><td class="nowrap">Cloudflare</td><td>$10/yr</td><td>At cost, no markup, but you add the DNS records yourself</td></tr>
+              <tr><td class="nowrap">Namecheap or Porkbun</td><td>$11/yr</td><td>Cheap first year, watch the renewal price</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Have <b>her</b> buy it, or transfer it to her later. An agent whose personal domain is registered to her marketing guy has a problem the day they part ways.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="10">
+      <div class="step-n">10</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Point the domain at the project</span></label></h3>
+        <ol>
+          <li>Vercel, project, <b>Settings</b>, <b>Domains</b>, type the domain, <kbd>Add</kbd>.</li>
+          <li>Bought through Vercel: it is already done, skip ahead.</li>
+          <li>Bought elsewhere: Vercel prints the exact records to add. They are usually an <code>A</code> record on the apex pointing at <code>76.76.21.21</code>, and a <code>CNAME</code> on <code>www</code> pointing at <code>cname.vercel-dns.com</code>. <b>Copy them off Vercel's screen rather than off this page</b>, since those values are Vercel's to change.</li>
+          <li>Add them at your registrar's DNS panel and wait for Vercel to show a green check. Usually minutes, occasionally a few hours.</li>
+          <li>Pick one form as primary, apex or <code>www</code>, and let Vercel redirect the other to it. Which one does not matter. Having both answer does.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step" data-step="11">
+      <div class="step-n">11</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Tell the code its own address</span></label></h3>
+        <p>The site's address is written into eight places: the canonical tag, three Open Graph tags, two structured-data blocks, the sitemap, and the <code>Sitemap:</code> line in <code>robots.txt</code>. Miss one by hand and Google indexes the <code>vercel.app</code> preview instead of the real domain. One command moves all of them.</p>
+        <div class="cmd"><pre>cd ~/north-shore-site
+python tools/configure.py <b>--url</b> https://margiehorowitz.com
+python tools/configure.py <b>--status</b>
+git commit -am "Point the site at its own domain"
+git push</pre><button type="button">copy</button></div>
+        <div class="verify">
+          <h4>Check it worked</h4>
+          <p><code>--status</code> prints the new URL. On the live site, view source and confirm <code>&lt;link rel="canonical"&gt;</code> carries the real domain, not the <code>vercel.app</code> one.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="12">
+      <div class="step-n">12</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Put the address back on the profiles</span></label></h3>
+        <p>Phase 1 left three website fields empty because there was nothing to put in them. Fill them in now, while the domain is fresh in your head.</p>
+        <ul>
+          <li><b>Google Business Profile:</b> the website field, and set the primary action to the site.</li>
+          <li><b>Facebook Page:</b> the website field, and point the page button at it.</li>
+          <li><b>Instagram:</b> the bio link.</li>
+        </ul>
+        <p>Use the exact primary form you chose in step 10, with or without <code>www</code>, everywhere. Consistency across listings is the most common thing a local profile gets wrong.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 3 ============ -->
+  <section class="phase" id="p3">
+    <div class="phase-head">
+      <span class="phase-num">PHASE 3</span>
+      <h2>Somewhere to keep the people who get in touch</h2>
+      <span class="clock">~30 min</span>
+    </div>
+    <p class="phase-note">This is the part that most agent websites skip, and it is the part that turns a form into commission. Build it before the form starts firing, not after.</p>
+
+        <div class="step" data-step="13">
+      <div class="step-n">13</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Understand what the CRM is actually for</span></label></h3>
+        <p>No clicking in this step. It is the argument for the whole phase, and it is written to be read aloud or turned around on a laptop, because the person who has to believe it is Margie.</p>
+
+        <div class="brief">
+          <p class="brief-tag">Written for the conversation with Margie</p>
+
+          <h4 class="sub">The leak</h4>
+          <p>Every agent has a version of the same one. Somebody calls in March asking what their house is worth. Margie talks to them, sends comps, they say they are thinking about spring next year. In September they list with somebody else.</p>
+          <p>Not because that agent was better. Because that agent called in July.</p>
+          <p>Nothing about that story is a lead-generation problem. The lead was already hers. It was a memory problem, and it is the single most expensive one in the business, because the deal was closer to signed than any cold call will ever be.</p>
+
+          <h4 class="sub">The question worth asking her, rather than a statistic</h4>
+          <p><b>"How many people asked you what their house was worth last year and then never listed with anyone at all?"</b></p>
+          <p>She will have a number. It is usually larger than the person saying it expects, and it is a better argument than anything an industry report can supply, because it is hers. Some of those people genuinely changed their minds. Some of them went quiet because nobody stayed in front of them.</p>
+          <p>Then the arithmetic, which only has to be run once. The Nassau median single-family price was $875,000 in June 2026. At a negotiated rate around two and a half per cent, the listing side of a median sale is roughly $22,000 before the brokerage split. Commission rates are negotiable and that figure is illustrative, but the shape of it holds: <b>recovering one deal a year that would otherwise have drifted is worth more than every other item on this runbook combined.</b> The tool costs nothing, so there is no break-even to reach.</p>
+
+          <h4 class="sub">What the thing actually is</h4>
+          <p>Three jobs, and they are not equally important. The first two are the ones people think of, and they are the ones a notebook already half-solves.</p>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th>Job</th><th>In practice</th><th>Her phone and a notebook</th></tr></thead>
+              <tbody>
+                <tr><td class="nowrap">A list of everyone</td><td>Every person who ever asked, with the address and how to reach them</td><td>Fine</td></tr>
+                <tr><td class="nowrap">A record of what was said</td><td>Calls, emails and notes on one timeline, so month four does not start from nothing</td><td>Badly, and only if she wrote it down</td></tr>
+                <tr><td class="nowrap"><b>A reminder of what is next</b></td><td>"Call the Cedar Lane seller on the 14th" appearing on the 14th, without anyone remembering to look</td><td><b>Not at all</b></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The third one is the entire reason to do this. A CRM is not a database of people. She already has that, and after nineteen years she has it in better shape than any software will. What she does not have is a system that surfaces the right name on the right morning without her thinking about it. That is what she is being handed.</p>
+
+          <h4 class="sub">One lead, all the way through</h4>
+          <p>This is the part to walk through slowly. It is the whole product in eight rows.</p>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th>When</th><th>What happens</th><th>Who does it</th></tr></thead>
+              <tbody>
+                <tr><td class="nowrap tnum">Tue 9:14</td><td>A homeowner on Split Rock Road fills in the valuation form</td><td class="who-auto">the website</td></tr>
+                <tr><td class="nowrap tnum">Tue 9:14</td><td>Her phone buzzes with the name, the address and what they said</td><td class="who-auto">automatic</td></tr>
+                <tr><td class="nowrap tnum">Tue 9:14</td><td>The same person appears in the CRM, marked New</td><td class="who-auto">automatic</td></tr>
+                <tr><td class="nowrap tnum">Tue 9:22</td><td>She calls while they are still on the website. Six minutes. Books a walkthrough for Thursday.</td><td>Margie</td></tr>
+                <tr><td class="nowrap tnum">Tue 9:29</td><td>Two taps: log the call, set the next task for Thursday</td><td>Margie</td></tr>
+                <tr><td class="nowrap tnum">Thu 8:00</td><td>"Split Rock walkthrough" is sitting at the top of her task list</td><td class="who-auto">automatic</td></tr>
+                <tr><td class="nowrap tnum">Thu</td><td>Walkthrough, CMA and net sheet sent. They say spring, maybe. She sets a task for 1 February.</td><td>Margie</td></tr>
+                <tr><td class="nowrap tnum">1 Feb</td><td>The name comes back up on its own. She calls. They are ready.</td><td class="who-auto">automatic</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p>The competing agent who spoke to them that same week never called back in February. That is the only difference between the two of them, and it is worth the whole commission.</p>
+          <p>Note what is in the "Margie" column: two calls and about thirty seconds of tapping. Everything else happens whether she remembers it or not. That ratio is the pitch.</p>
+
+          <h4 class="sub">What her mornings look like</h4>
+          <p>She opens one screen. It shows the tasks due today, which on a normal week is two or three names. She makes those calls, which she was going to make anyway, and sets the next date before closing each one. Twenty minutes.</p>
+          <p>There is no data entry, no weekly review, and nothing to maintain. If it ever feels like more than that, it has been set up wrong, and step 15 is where that gets fixed.</p>
+
+          <h4 class="sub">What it will not do, said plainly</h4>
+          <ul>
+            <li>It will not call anyone for her, or write anything for her.</li>
+            <li>It will not tell her anything about a person that she does not put in.</li>
+            <li>It does not replace her memory of people. It replaces her memory of dates, which is the part that fails.</li>
+            <li>The free tier has no marketing automation and no mass email, which is deliberate. Sellers on the North Shore do not want a drip campaign from their neighbour's agent.</li>
+          </ul>
+
+          <h4 class="sub">The objections she will actually raise</h4>
+          <div class="tablewrap">
+            <table>
+              <thead><tr><th>She says</th><th>The honest answer</th></tr></thead>
+              <tbody>
+                <tr><td class="nowrap">"I keep it all in my head."</td><td>She keeps the <em>people</em> in her head, and she is better at that than any software. Nobody keeps forty follow-up dates in their head. This is a calendar for the ones that are not appointments yet.</td></tr>
+                <tr><td class="nowrap">"I tried one and stopped."</td><td>Almost everyone does, and usually because they were handed thirty fields to fill in per contact. This one is eight stages and a date. If it ever takes more than ten seconds a lead, it is set up wrong.</td></tr>
+                <tr><td class="nowrap">"I don't have time to learn software."</td><td>Fifteen minutes once, to see the screen. After that it is the twenty minutes of calls she was making anyway.</td></tr>
+                <tr><td class="nowrap">"What does it cost?"</td><td>Nothing. No time limit, no card, no trial that expires. The paid tiers are marketing automation she does not need at this volume.</td></tr>
+                <tr><td class="nowrap">"Whose is it?"</td><td>Hers. The account is in her name and her email. Add yourself as a user so you can set it up, and she can remove you in one click.</td></tr>
+                <tr><td class="nowrap">"What if I want out?"</td><td>Contacts export to a spreadsheet in two clicks and there is no contract. Worth saying out loud, because an agent should never be handed a system her marketing guy controls.</td></tr>
+                <tr><td class="nowrap">"My brokerage has one."</td><td>Then use theirs, and the website can point at it instead. Worth checking before step 14, because a brokerage CRM she already logs into beats a better one she does not. Ask what happens to those contacts if she ever changes brokerage; that answer often decides it.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h4 class="sub">The one habit that makes or breaks it</h4>
+          <p><b>Never close a record without setting the next date.</b> That is the whole discipline. Do that and the system works on its own. Skip it and the pipeline quietly turns back into a list, and a list has never reminded anyone of anything.</p>
+        </div>
+
+        <h4 class="sub">Two things for you, not for her</h4>
+        <p><b>Why HubSpot rather than a real estate CRM.</b> Follow Up Boss, kvCORE and Sierra are built for this industry and cost between $69 and $500 a month. What they add over HubSpot is IDX search, drip campaigns and lead-source routing, none of which matter until she has more leads than she can personally call. HubSpot's free tier has no time limit, no card, a million contacts, tasks with reminders, a deal pipeline, email logging, and an API the website can write to. Move to the industry tools when the volume justifies the bill.</p>
+        <p><b>Contact against deal,</b> because the vocabulary trips people up and you will need it in step 15. A <b>contact</b> is a person. A <b>deal</b> is one potential transaction. The same contact can carry several deals over the years: the house she sells in 2027 and the condo she buys in 2030. The form creates contacts. You create the deal when the lead turns into a real conversation.</p>
+      </div>
+    </div>
+
+<div class="step" data-step="14">
+      <div class="step-n">14</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Create the HubSpot account</span></label></h3>
+        <ol>
+          <li><a href="https://www.hubspot.com/products/get-started-free">hubspot.com</a>, take the free CRM. No card is asked for.</li>
+          <li><b>Whose email signs up matters.</b> If she has already agreed, use hers and have her add you at <b>Settings</b>, <b>Users and Teams</b>. If you are still building this to show her, use yours: a portal is handed over later by adding her as a super admin and stepping down, which takes two minutes and does not touch the data.</li>
+          <li>It asks about company size and industry during onboarding. Answer honestly and skip every optional step. It will offer to connect an inbox and import contacts, both of which can wait.</li>
+          <li>Note which region your portal is in. The URL is <code>app.hubspot.com</code> or <code>app-eu1.hubspot.com</code>, and it matters if you ever go looking in their documentation.</li>
+        </ol>
+        <div class="verify">
+          <h4>Check it worked</h4>
+          <p><b>CRM</b>, <b>Contacts</b> loads and shows an empty table. That is all you need before step 15.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="15">
+      <div class="step-n">15</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Build the pipeline around a seller, not a sales team</span></label></h3>
+        <p>HubSpot ships with a generic sales pipeline whose stages are meaningless here. Replace them, because the stage names are what you will actually look at every morning.</p>
+        <ol>
+          <li><b>Settings</b> (the gear, top right), <b>Objects</b>, <b>Deals</b>, <b>Pipelines</b>.</li>
+          <li>Rename the default pipeline to <b>Seller pipeline</b>.</li>
+          <li>Replace the stages with these. Each one is a thing that either happened or did not, which is what makes a pipeline honest.</li>
+        </ol>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Stage</th><th>Means</th><th>The next action</th></tr></thead>
+            <tbody>
+              <tr><td class="nowrap">New</td><td>The form fired. Nobody has spoken to them.</td><td>Call within the hour</td></tr>
+              <tr><td class="nowrap">Contacted</td><td>She reached them and they talked</td><td>Book the walkthrough</td></tr>
+              <tr><td class="nowrap">Valuation booked</td><td>A date is in the calendar</td><td>Pull the comps</td></tr>
+              <tr><td class="nowrap">CMA delivered</td><td>They have the number and the net sheet</td><td>Ask for the listing appointment</td></tr>
+              <tr><td class="nowrap">Listing appointment</td><td>The presentation is scheduled</td><td>Prepare, then ask for the signature</td></tr>
+              <tr><td class="nowrap">Listing signed</td><td>Signed agreement</td><td>Photography and go live</td></tr>
+              <tr><td class="nowrap">Closed won</td><td>It sold</td><td>Ask for the review, step 32</td></tr>
+              <tr><td class="nowrap">Closed lost</td><td>Listed elsewhere, or not selling after all</td><td>Note why, follow up in six months</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Leads from the form land as <b>contacts</b> with status New, not as deals. Dragging a contact into the pipeline yourself takes ten seconds and forces you to look at each one, which at a handful of leads a week is a feature rather than a chore. Automating it needs paid Workflows, and it is not worth the money at this volume.</p>
+        <div class="warn">
+          <h4>The habit that makes this work</h4>
+          <p>Every time a deal moves, set the next task with a date before you close the record. A pipeline with no tasks on it is a list, and a list will not remind anyone of anything.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="16">
+      <div class="step-n">16</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Create the private app token</span></label></h3>
+        <p>This is how the website writes into the CRM. HubSpot's free tier includes private apps and the contacts API, so no paid Workflow is needed.</p>
+        <ol>
+          <li><b>Settings</b>, then <b>Integrations</b>, <b>Private Apps</b>.</li>
+          <li><kbd>Create a private app</kbd>. Name it <code>north-shore-site</code>.</li>
+          <li>The <b>Scopes</b> tab, search for <code>contacts</code>, and tick <b>crm.objects.contacts.write</b>. Ticking write usually selects read as well, which is fine. Tick nothing else.</li>
+          <li><kbd>Create app</kbd>, confirm, then <b>Show token</b> and copy it. It starts <code>pat-</code>.</li>
+        </ol>
+        <div class="warn">
+          <h4>Watch out</h4>
+          <p>That token can read and write your contacts. It goes into Vercel's environment variables in step 20 and nowhere else. Never into the repository, never into a message. If it does leak, delete the private app and make a new one, which takes a minute.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="17">
+      <div class="step-n">17</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Add the spreadsheet backup</span></label></h3>
+        <p>Optional, ten minutes, and worth it. A Google Sheet gives you a plain record that outlives any account decision, and it is the fastest thing to hand someone who asks how many leads came in last quarter.</p>
+        <p>The full recipe with the script is in <a href="#appb">appendix B</a>. It produces a URL that goes into <code>LEAD_WEBHOOK_URL</code> in step 20, alongside the CRM token, so a lead lands in both places at once.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 4 ============ -->
+  <section class="phase" id="p4">
+    <div class="phase-head">
+      <span class="phase-num">PHASE 4</span>
+      <h2>Make the leads arrive</h2>
+      <span class="clock">~25 min</span>
+    </div>
+    <p class="phase-note">The form posts to a real function. That function writes every lead to the Vercel log <em>before</em> it tries to deliver anywhere, so an outage at Resend or HubSpot cannot lose one. On top of that log there are three independent channels, and you can use any combination.</p>
+
+    <div class="step" data-step="18">
+      <div class="step-n">18</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Create a Resend key</span></label></h3>
+        <p>Email is the channel that gets Margie to call someone back the same afternoon. The CRM is where the lead lives; the email is what makes her look.</p>
+        <ol>
+          <li>Sign up at <a href="https://resend.com">resend.com</a>. The free tier is 3,000 emails a month and 100 a day, which is far beyond what one agent's form produces.</li>
+          <li>Sidebar, <b>API Keys</b>, then <kbd>Create API Key</kbd>.</li>
+          <li>Name it <code>north-shore-site</code>. Permission: <b>Sending access</b>. Domain: <b>All domains</b>.</li>
+          <li>Copy the key, which starts <code>re_</code>, the moment it appears. Resend shows it once and never again.</li>
+        </ol>
+        <div class="warn">
+          <h4>Watch out</h4>
+          <p>Until you verify a domain in Resend, you can only send <b>from</b> <code>onboarding@resend.dev</code> and only <b>to</b> the address that owns the Resend account. That is fine for testing and fine while leads route to you. Sending straight to Margie's inbox needs step 19.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="19">
+      <div class="step-n">19</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Verify the sending domain</span></label></h3>
+        <p>You have the domain now, from step 9, so this can be done properly rather than deferred.</p>
+        <ol>
+          <li>Resend, <b>Domains</b>, <kbd>Add Domain</kbd>, type the domain.</li>
+          <li>Resend lists three records: an <code>MX</code>, a <code>TXT</code> for SPF, and a <code>TXT</code> for DKIM. Add them at whoever hosts your DNS, which is the same panel you used in step 10.</li>
+          <li>Wait a few minutes, click <kbd>Verify</kbd>.</li>
+        </ol>
+        <p>Once it is green, <code>LEAD_FROM</code> can be a real address on the domain, which is what stops the notification landing in spam.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="20">
+      <div class="step-n">20</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Add the environment variables</span></label></h3>
+        <p>In Vercel: your project, <b>Settings</b>, <b>Environment Variables</b>. Add each one and tick all three environments (Production, Preview, Development) so previews behave the same as the live site.</p>
+        <div class="tablewrap">
+          <table>
+            <thead><tr><th>Name</th><th>Value</th><th>From</th></tr></thead>
+            <tbody>
+              <tr><td><code>RESEND_API_KEY</code></td><td>the <code>re_…</code> key</td><td class="nowrap">step 18</td></tr>
+              <tr><td><code>LEAD_TO</code></td><td>your email while testing. Comma-separate to send to two people.</td><td class="nowrap">you</td></tr>
+              <tr><td><code>LEAD_FROM</code></td><td><code>Margie Horowitz Website &lt;leads@yourdomain.com&gt;</code>, or <code>onboarding@resend.dev</code> if step 19 is not done</td><td class="nowrap">step 19</td></tr>
+              <tr><td><code>HUBSPOT_TOKEN</code></td><td>the <code>pat-…</code> token</td><td class="nowrap">step 16</td></tr>
+              <tr><td><code>LEAD_WEBHOOK_URL</code></td><td>the Apps Script <code>/exec</code> URL, if you did step 17</td><td class="nowrap">appendix B</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="21">
+      <div class="step-n">21</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Redeploy, because saving the variables is not enough</span></label></h3>
+        <p>This is the step almost everyone skips, and the symptom is a form that looks like it worked while nothing arrives anywhere. Environment variables are baked in at deploy time, so the deployment that is currently live still has none of them.</p>
+        <ol>
+          <li><b>Deployments</b>, the one at the top, the <kbd>&ctdot;</kbd> menu, <kbd>Redeploy</kbd>, confirm.</li>
+          <li>Or push any commit, which redeploys automatically.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step" data-step="22">
+      <div class="step-n">22</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Send a real lead and follow it to all four places</span></label></h3>
+        <p>Open the live site, scroll to the form, and fill it in as a seller would. <b>Take more than three seconds over it.</b> A submission faster than that is treated as a bot and silently dropped, which is the point, but it will confuse you if you are pasting.</p>
+        <div class="verify">
+          <h4>Check it worked, in four places</h4>
+          <p><b>1. The page.</b> The button changes to <i>Thank you, I will be in touch</i> and the fields lock.</p>
+          <p><b>2. The inbox.</b> The email arrives. Look in spam the first time.</p>
+          <p><b>3. HubSpot.</b> <b>Contacts</b> shows the new person, with the address filled in and the timing and notes in the Message property.</p>
+          <p><b>4. Vercel.</b> The <b>Logs</b> tab (newer accounts file it under <b>Observability</b>), filtered to <code>/api/lead</code>, has a line beginning <code>{"tag":"LEAD"</code> with every field in it.</p>
+        </div>
+        <div class="warn">
+          <h4>If something is missing</h4>
+          <p>The lead is still in the log, so nothing is lost. To find out which channel failed: browser DevTools, <b>Network</b> tab, click the <code>lead</code> request, then <b>Response</b>. The <code>delivery</code> array names all three channels with either <code>ok</code>, an <code>error</code>, or <code>"skipped":"not configured"</code>, which means a variable is missing or you did not redeploy.</p>
+        </div>
+        <p>Now drag that test contact into the Seller pipeline and back out again, so you have seen the shape of the thing before a real one arrives. Then delete it.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 5 ============ -->
+  <section class="phase blocked" id="p5">
+    <div class="phase-head">
+      <span class="phase-num">PHASE 5 &middot; NEEDS STEP 1 ANSWERED</span>
+      <h2>Margie's answers, applied</h2>
+      <span class="clock">an hour, once she replies</span>
+    </div>
+    <p class="phase-note">Everything up to here works without her. This phase is where her answers from step 1 go into the page, and it is the gate on publishing: none of it can be worked around from this side.</p>
+
+    <div class="step" data-step="23">
+      <div class="step-n">23</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Set the brokerage everywhere it appears</span></label></h3>
+        <p>New York requires a salesperson's advertising to carry the broker's name and business address (19 NYCRR 175.25), so this is a hard gate rather than a loose end. It also has to match on the Google profile and the Facebook Page.</p>
+        <div class="cmd"><pre>grep -n tofill index.html   <i># lists all six spots waiting on her</i></pre><button type="button">copy</button></div>
+        <p>The contact block and the footer both carry a note explaining the conflict between the two brokerages. Delete those notes once the answer is in, or the page tells every visitor about a problem that no longer exists.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="24">
+      <div class="step-n">24</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Add the New York disclosures</span></label></h3>
+        <p>The footer already carries the Equal Housing Opportunity mark and the "deemed reliable" language. Two things still have to go in beside them, both from her brokerage's compliance materials rather than written fresh:</p>
+        <ul>
+          <li>The <b>Fair Housing notice</b> and the brokerage's fair housing disclosure.</li>
+          <li>The <b>Standard Operating Procedures</b>, which New York requires a broker to publish and make available.</li>
+        </ul>
+        <p>Ask her office for the PDF or the exact wording they use elsewhere, and reuse it verbatim.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="25">
+      <div class="step-n">25</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Switch on the brokerage structured data</span></label></h3>
+        <p>The page carries a second structured-data block, deliberately commented out, holding the brokerage and the office address. Search engines treat a wrong address worse than a missing one, which is why it ships disabled.</p>
+        <ol>
+          <li>Open <code>index.html</code>, search for <code>BROKERAGE:BEGIN</code>.</li>
+          <li>Delete the <code>&lt;!--</code> on the opening line and the <code>--&gt;</code> on the closing line.</li>
+          <li>Replace <code>BROKERAGE NAME</code>, <code>STREET</code>, <code>TOWN</code> and <code>ZIP</code> with what she confirms.</li>
+        </ol>
+        <div class="verify">
+          <h4>Check it worked</h4>
+          <p>Paste the live URL into <a href="https://validator.schema.org">validator.schema.org</a>. It should read one <code>RealEstateAgent</code> with the address attached, and report no errors.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="26">
+      <div class="step-n">26</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Drop in the portrait, the testimonials and the two photo sets</span></label></h3>
+        <ul>
+          <li><b>Portrait:</b> into the empty slot in the about section, and onto the Google and Facebook profiles at the same time so all three match.</li>
+          <li><b>Testimonials:</b> the three quotes replace the placeholders in the "What clients say" section.</li>
+          <li><b>Photographs</b> for 22 Lincoln Ave and 44 Tyrconnell Ave go into <code>img/real/</code> as <code>p-glen-head.jpg</code> and <code>p-tyrconnell.jpg</code>, then run the sync so their "Representative image" badges disappear:</li>
+        </ul>
+        <div class="cmd"><pre>python tools/sync_real_photos.py</pre><button type="button">copy</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PHASE 6 ============ -->
+  <section class="phase" id="p6">
+    <div class="phase-head">
+      <span class="phase-num">PHASE 6</span>
+      <h2>Open it to search, then keep it running</h2>
+      <span class="clock">~20 min, then monthly</span>
+    </div>
+    <p class="phase-note">Everything so far has been behind a <code>noindex</code>. This is the phase that makes the site findable, and it should only run once phase 5 is genuinely finished.</p>
+
+    <div class="step" data-step="27">
+      <div class="step-n">27</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Throw the switch</span></label></h3>
+        <p>Three things have to change together: the <code>noindex</code> meta tag, the <code>Disallow</code> in <code>robots.txt</code>, and the "design concept" bar across the top. Doing them by hand means eventually doing two of the three.</p>
+        <div class="cmd"><pre>cd ~/north-shore-site
+python tools/configure.py <b>--live</b>
+git commit -am "Publish"
+git push</pre><button type="button">copy</button></div>
+        <p>The command prints the compliance reminder from phase 5 and the count of <code>.tofill</code> spots still on the page. If that count is not zero, stop and go back.</p>
+        <div class="verify">
+          <h4>Check it worked</h4>
+          <p>On the live site: no concept bar at the top; view source shows <code>content="index, follow, max-image-preview:large"</code>; <code>/robots.txt</code> now says <code>Allow: /</code>.</p>
+        </div>
+        <p style="color:var(--ink-2);font-size:14.5px">To reverse it at any point, <code>python tools/configure.py --concept</code> puts all three back exactly as they were.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="28">
+      <div class="step-n">28</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Look at the link before anyone else does</span></label></h3>
+        <p>The social card is already built and sitting at <code>/og.jpg</code>: navy, her headline claim, her name. Confirm it renders before the link goes on the Facebook Page.</p>
+        <ol>
+          <li>Paste the URL into <a href="https://www.opengraph.xyz">opengraph.xyz</a>, which previews Facebook, Twitter and LinkedIn at once.</li>
+          <li>Or just text the link to yourself and look at the preview.</li>
+        </ol>
+        <div class="warn">
+          <h4>Watch out</h4>
+          <p>Facebook and LinkedIn cache the card hard. If you change <code>og.jpg</code> later, run the URL through <a href="https://developers.facebook.com/tools/debug/">Facebook's Sharing Debugger</a> and LinkedIn's Post Inspector to force a refresh, or the old card follows the link around for weeks.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="step" data-step="29">
+      <div class="step-n">29</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Register with Google Search Console</span></label></h3>
+        <ol>
+          <li><a href="https://search.google.com/search-console">search.google.com/search-console</a>, <kbd>Add property</kbd>, choose <b>URL prefix</b>, paste the full <code>https://</code> address.</li>
+          <li>Verification: pick the <b>HTML tag</b> method and copy the <code>&lt;meta name="google-site-verification" …&gt;</code> line.</li>
+          <li>Paste it into <code>index.html</code> between the two markers already waiting for it:</li>
+        </ol>
+        <div class="cmd"><pre>&lt;!-- SEARCHCONSOLE:BEGIN … --&gt;
+<b>&lt;meta name="google-site-verification" content="…" /&gt;</b>
+&lt;!-- SEARCHCONSOLE:END --&gt;</pre><button type="button">copy</button></div>
+        <ol start="4">
+          <li>Commit, push, wait for the deploy to finish, then click <kbd>Verify</kbd>.</li>
+          <li><b>Sitemaps</b> in the sidebar, enter <code>sitemap.xml</code>, <kbd>Submit</kbd>.</li>
+          <li><b>URL Inspection</b> at the top, paste the homepage, then <kbd>Request Indexing</kbd>. This is the difference between appearing in days and appearing in weeks.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step" data-step="30">
+      <div class="step-n">30</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Add Bing, which takes one click</span></label></h3>
+        <p><a href="https://www.bing.com/webmasters">bing.com/webmasters</a>, sign in, and choose <b>Import from Google Search Console</b>. It carries the verification and the sitemap across without you touching DNS again.</p>
+        <p>Worth the sixty seconds for a reason beyond Bing's own traffic: it is the index behind ChatGPT's search, so it is how the site turns up when someone asks an assistant for a listing agent in Syosset.</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="31">
+      <div class="step-n">31</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Turn on analytics</span></label></h3>
+        <p>The tracking scripts are already on the page. They do nothing until the two products are switched on, and they set no cookies, so no consent banner is needed.</p>
+        <ol>
+          <li>Vercel, project, <b>Analytics</b> tab, <kbd>Enable</kbd>.</li>
+          <li>Vercel, project, <b>Speed Insights</b> tab, <kbd>Enable</kbd>.</li>
+          <li>Give it a day, then look at referrers. That is what tells you whether the leads came from Google, from the Facebook Page, or from a link she texted someone.</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step" data-step="32">
+      <div class="step-n">32</div>
+      <div class="step-body">
+        <h3><label><input type="checkbox"><span>Set the two recurring habits</span></label></h3>
+        <p><b>Monthly, five minutes.</b> Submit a test lead through the live form and confirm it reaches the inbox and HubSpot. An expired API key or a plan change fails silently, and a form that quietly stopped working is worse than no form. The Vercel log is the backstop, but only if someone looks.</p>
+        <p><b>After every closing.</b> Ask the seller for a Google review, with a link straight to the review form. For a local agent, review count moves the map ranking harder than anything you can change on the website. That is why step 15's last pipeline stage has "ask for the review" as its next action: it belongs in the process, not in someone's memory.</p>
+        <p>Once three or four reviews exist, they can also come back onto the site and replace the testimonial placeholders from step 26 with something checkable.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ APPENDIX ============ -->
+  <section class="appendix" id="appendix">
+    <h2>Appendices</h2>
+
+    <div class="app-item" id="appa">
+      <h3><span>A</span> Every environment variable</h3>
+      <p>All of them are optional. With none set, the form still validates, still screens bots, and still records every lead in the Vercel runtime log.</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Name</th><th>Example</th><th>Missing means</th></tr></thead>
+          <tbody>
+            <tr><td><code>RESEND_API_KEY</code></td><td><code>re_ab12…</code></td><td>No email is sent</td></tr>
+            <tr><td><code>LEAD_TO</code></td><td><code>margie@…, don@…</code></td><td>No email is sent</td></tr>
+            <tr><td><code>LEAD_FROM</code></td><td><code>Website &lt;leads@…&gt;</code></td><td>No email is sent</td></tr>
+            <tr><td><code>HUBSPOT_TOKEN</code></td><td><code>pat-na1-…</code></td><td>No contact is created</td></tr>
+            <tr><td><code>LEAD_WEBHOOK_URL</code></td><td><code>https://script.google…/exec</code></td><td>No webhook is posted</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>The three delivery channels are independent. One failing does not stop the others, and none of them can stop the log write, which happens first.</p>
+    </div>
+
+    <div class="app-item" id="appb">
+      <h3><span>B</span> The spreadsheet backup, at no cost</h3>
+      <p>The CRM is where a lead gets worked. The sheet is a plain record that outlives any account decision and answers "how many came in last quarter" in one glance.</p>
+      <ol>
+        <li>Create a new Google Sheet. Rename the first tab to <code>Leads</code>.</li>
+        <li>Row 1, these headers: <code>Received</code>, <code>Name</code>, <code>Contact</code>, <code>Address</code>, <code>Timing</code>, <code>Note</code>, <code>Page</code>.</li>
+        <li><b>Extensions</b>, <b>Apps Script</b>. Delete what is there and paste this:</li>
+      </ol>
+      <div class="cmd"><pre><b>function</b> doPost(e) {
+  <b>const</b> sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(<i>'Leads'</i>);
+  <b>const</b> lead = JSON.parse(e.postData.contents);
+  sheet.appendRow([
+    <b>new</b> Date(), lead.name, lead.contact, lead.address,
+    lead.timing, lead.note, lead.page
+  ]);
+  <b>return</b> ContentService
+    .createTextOutput(JSON.stringify({ ok: <b>true</b> }))
+    .setMimeType(ContentService.MimeType.JSON);
+}</pre><button type="button">copy</button></div>
+      <ol start="4">
+        <li><kbd>Deploy</kbd>, <b>New deployment</b>, type <b>Web app</b>.</li>
+        <li>Execute as: <b>Me</b>. Who has access: <b>Anyone</b>. This has to be "Anyone" or Vercel cannot reach it. The URL is unguessable and the script only ever appends.</li>
+        <li>Authorise it. Google will warn that the script is unverified: that is normal for your own script. <b>Advanced</b>, then <b>Go to (project name)</b>.</li>
+        <li>Copy the deployment URL, ending in <code>/exec</code>. That is your <code>LEAD_WEBHOOK_URL</code>.</li>
+        <li>Add it in Vercel, redeploy (step 21 again), and send a test lead.</li>
+      </ol>
+      <div class="verify">
+        <h4>Check it worked</h4>
+        <p>A new row appears in the sheet within a second or two of submitting. In the form's network response, the <code>delivery</code> array shows <code>{"channel":"webhook","ok":true}</code>.</p>
+      </div>
+      <p style="color:var(--ink-2);font-size:14.5px">The same variable takes a Zapier catch hook, a Make webhook, or a Slack incoming webhook instead. Anything that accepts a JSON POST works.</p>
+    </div>
+
+    <div class="app-item" id="appc">
+      <h3><span>C</span> What the CRM channel actually sends</h3>
+      <p>Useful when a field does not look right in HubSpot, or if you ever swap CRMs.</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Form field</th><th>HubSpot property</th><th>Note</th></tr></thead>
+          <tbody>
+            <tr><td class="nowrap">Your name</td><td><code>firstname</code>, <code>lastname</code></td><td>Split at the first space</td></tr>
+            <tr><td class="nowrap">Phone or email</td><td><code>email</code> or <code>phone</code></td><td>Whichever it looks like, never both</td></tr>
+            <tr><td class="nowrap">Property address</td><td><code>address</code></td><td>Omitted when blank</td></tr>
+            <tr><td class="nowrap">Timing and notes</td><td><code>message</code></td><td>Combined, with the page it came from</td></tr>
+            <tr><td class="nowrap">(always)</td><td><code>lifecyclestage</code>, <code>hs_lead_status</code></td><td>Set to Lead and New</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Two behaviours worth knowing. If a portal does not have the default <code>message</code> property, the write is retried without it rather than failing, so the contact is never lost to a schema difference. And if the email is already a contact, HubSpot answers 409 and the function counts that as delivered, because already knowing someone is not an error.</p>
+    </div>
+
+    <div class="app-item" id="appd">
+      <h3><span>D</span> Working on it locally</h3>
+      <p>The whole thing runs on this machine, including the lead function, so nothing has to be tested in production.</p>
+      <div class="cmd"><pre>cd ~/north-shore-site
+
+node tools/dev_server.mjs            <i># site + working API on :5130</i>
+node tools/test_lead_api.mjs         <i># 26 checks on the lead function</i>
+python tools/configure.py --status   <i># indexing state, site URL, tofill count</i>
+python tools/build_brand_assets.py   <i># rebuild og.jpg and the icon set</i></pre><button type="button">copy</button></div>
+      <p>To test real delivery locally, pass the keys on the command line instead of putting them in a file:</p>
+      <div class="cmd"><pre>RESEND_API_KEY=re_… LEAD_TO=you@example.com \
+  LEAD_FROM=onboarding@resend.dev HUBSPOT_TOKEN=pat-na1-… \
+  node tools/dev_server.mjs</pre><button type="button">copy</button></div>
+      <p>Run <code>test_lead_api.mjs</code> before any push that touches the form. It catches a broken validator in a second, where production would take a lost lead and a week to notice.</p>
+    </div>
+
+    <div class="app-item" id="appe">
+      <h3><span>E</span> When something goes wrong</h3>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Symptom</th><th>Almost always</th></tr></thead>
+          <tbody>
+            <tr><td><code>/api/lead</code> returns 404</td><td>Framework Preset was not set to <b>Other</b>, or a build command overwrote the output. Re-check step 7.</td></tr>
+            <tr><td>Form says sent, nothing arrives anywhere</td><td>You did not redeploy after adding the variables. Step 21.</td></tr>
+            <tr><td>Email in spam</td><td><code>LEAD_FROM</code> is still <code>onboarding@resend.dev</code>. Verify a domain, step 19.</td></tr>
+            <tr><td>Resend: "can only send to your own address"</td><td>Domain not verified yet. Expected. Step 19.</td></tr>
+            <tr><td>Email arrives, HubSpot stays empty</td><td>The <code>delivery</code> array in the network response names the reason. A <code>401</code> is a bad or deleted token; a <code>403</code> is a missing scope, so re-check that <code>crm.objects.contacts.write</code> is ticked in step 16.</td></tr>
+            <tr><td>HubSpot contact has no address or notes</td><td>The portal is missing a default property and the retry dropped the extras. Appendix C.</td></tr>
+            <tr><td>Submitting does nothing at all</td><td>Open the console. If the fetch is failing, the function is down; if nothing fires, a JavaScript error earlier on the page stopped the handler binding.</td></tr>
+            <tr><td>Nothing recorded, no error shown</td><td>Under three seconds from page load, so it was scored as a bot. Reload and take your time.</td></tr>
+            <tr><td>Google shows the vercel.app URL</td><td><code>configure.py --url</code> was never run. Step 11.</td></tr>
+            <tr><td>Nothing indexed after two weeks</td><td>Search Console, URL Inspection, read the coverage reason. Usually <code>robots.txt</code> is still closed, so <code>--live</code> did not get pushed.</td></tr>
+            <tr><td>Google profile will not verify</td><td>Service-area businesses often fail the postcard and pass the video. The video has to show the signage or office, a work tool, and you logged into the profile.</td></tr>
+            <tr><td>Old social card keeps appearing</td><td>Facebook or LinkedIn cache. Run it through their debuggers. Step 28.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer class="end">
+    <span>Runbook for workflo17/north-shore-site</span>
+    <span>Written 20 August 2026</span>
+    <span>Steps 1 to 22 can run without waiting. Step 27 waits on Margie.</span>
+  </footer>
+
+  </main>
+</div>
+</div>
+
+<script>
+(() => {
+  /* ---- copy buttons ---- */
+  document.querySelectorAll(".cmd button").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const pre = btn.parentElement.querySelector("pre");
+      try {
+        await navigator.clipboard.writeText(pre.innerText);
+        btn.textContent = "copied";
+        btn.classList.add("ok");
+      } catch {
+        const r = document.createRange();
+        r.selectNodeContents(pre);
+        getSelection().removeAllRanges();
+        getSelection().addRange(r);
+        btn.textContent = "selected";
+      }
+      setTimeout(() => { btn.textContent = "copy"; btn.classList.remove("ok"); }, 1600);
+    });
+  });
+
+  /* ---- step progress, remembered across visits where storage allows ---- */
+  const KEY = "north-shore-runbook";
+  const steps = [...document.querySelectorAll(".step")];
+  const fill = document.getElementById("pfill");
+  const txt = document.getElementById("ptxt");
+
+  const load = () => { try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; } };
+  const save = v => { try { localStorage.setItem(KEY, JSON.stringify(v)); } catch {} };
+
+  function paint() {
+    const done = steps.filter(s => s.querySelector("input").checked);
+    steps.forEach(s => s.classList.toggle("is-done", s.querySelector("input").checked));
+    fill.style.width = (done.length / steps.length * 100) + "%";
+    txt.textContent = `${done.length} of ${steps.length} steps done`;
+    save(done.map(s => s.dataset.step));
+  }
+
+  const saved = load();
+  steps.forEach(s => {
+    const box = s.querySelector("input");
+    box.checked = saved.includes(s.dataset.step);
+    box.addEventListener("change", paint);
+  });
+  paint();
+
+  document.getElementById("preset").addEventListener("click", () => {
+    steps.forEach(s => { s.querySelector("input").checked = false; });
+    paint();
+  });
+
+  /* ---- which phase am I in ---- */
+  const links = [...document.querySelectorAll(".rail a")];
+  const targets = links.map(a => document.querySelector(a.getAttribute("href"))).filter(Boolean);
+  const spy = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => a.classList.toggle("here", a.getAttribute("href") === "#" + e.target.id));
+    });
+  }, { rootMargin: "-15% 0px -70% 0px" });
+  targets.forEach(t => spy.observe(t));
+})();
+</script>
+
+</body>
+</html>

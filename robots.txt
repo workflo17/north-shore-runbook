@@ -1,0 +1,3 @@
+# Internal working document. Not for indexing, ever.
+User-agent: *
+Disallow: /
